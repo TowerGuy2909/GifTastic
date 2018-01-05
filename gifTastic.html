@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		
+	</title>
+</head>
+<body>
+
+	<button data-animal ="cat">cats</button>
+	<button data-animal ="dog">dogs</button>
+	<button data-animal ="bird">birds</button>
+
+	<div id="gifs-appear-here">
+		
+	</div>
+
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+
+		$("button").on("click", function(){
+
+			var animal = $(this).data("animal");
+
+			var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=oaHSY8wjitMacRaxtHhnX6NFULHXtffh&q=" + animal +"&limit=10&rating=g";
+
+			$.ajax({
+				url: queryURL,
+				method: "GET"
+			}).done(function(response){
+
+				var results = response.data;
+
+				for (var i = 0; i < results.length; i++) {
+
+					var animalDiv = $('<button class="gif">').on('click', '.gif', function() {
+						var src = $(this).attr("src");
+						if($(this).hasClass('playing')){
+         					//supposed to switch the gif url to the still one if 
+        			 		$(this).attr('src', src.replace(/results[i].images.fixed_height_still.url/i, "result[i].images.fixed_height.url"))
+        				 	$(this).removeClass('playing');
+
+     						} else {
+       						 //supposed to switch the gif url to the animating one
+       						$(this).addClass('playing');
+        					$(this).attr('src', src.replace(/result[i].images.fixed_height.url/i, "results[i].images.fixed_height_still.url"))
+    						}
+						});
+
+					var p = $('<p>').text("Rating: " + results[i].rating);
+
+					var animalImage = $('<img>');
+
+					animalImage.attr('src', results[i].images.fixed_height_still.url);
+
+
+					//This is supposed to be the moving image. Comes back as 'undefined'. Don't know why, same as the still one.
+					var movingAnimalImage = $('<img>')
+
+					movingAnimalImage.attr('src', result[i].images.fixed_height.url);
+
+					animalDiv.append(p);
+					
+					animalDiv.append(animalImage);
+
+					$('#gifs-appear-here').prepend(animalDiv);
+
+				}
+			});
+		});
+
+	</script>
+</body>
+
+</html>
