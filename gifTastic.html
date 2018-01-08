@@ -8,7 +8,9 @@
 <body>
 
 	<button data-animal ="cat">cats</button>
+
 	<button data-animal ="dog">dogs</button>
+
 	<button data-animal ="bird">birds</button>
 
 	<div id="gifs-appear-here">
@@ -16,13 +18,17 @@
 	</div>
 
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
 	<script type="text/javascript">
 
 		$("button").on("click", function(){
 
+
 			var animal = $(this).data("animal");
 
-			var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=oaHSY8wjitMacRaxtHhnX6NFULHXtffh&q=" + animal +"&limit=10&rating=g";
+			var number = Math.floor(Math.random()*1000) + 1;
+
+			var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=oaHSY8wjitMacRaxtHhnX6NFULHXtffh&q=" + animal +"&limit=10&rating=g&offset=" + number;
 
 			$.ajax({
 				url: queryURL,
@@ -30,34 +36,26 @@
 			}).done(function(response){
 
 				var results = response.data;
+				
+				$('#gifs-appear-here').empty();
 
 				for (var i = 0; i < results.length; i++) {
 
-					var animalDiv = $('<button class="gif">').on('click', '.gif', function() {
-						var src = $(this).attr("src");
-						if($(this).hasClass('playing')){
-         					//supposed to switch the gif url to the still one if 
-        			 		$(this).attr('src', src.replace(/results[i].images.fixed_height_still.url/i, "result[i].images.fixed_height.url"))
-        				 	$(this).removeClass('playing');
-
-     						} else {
-       						 //supposed to switch the gif url to the animating one
-       						$(this).addClass('playing');
-        					$(this).attr('src', src.replace(/result[i].images.fixed_height.url/i, "results[i].images.fixed_height_still.url"))
-    						}
-						});
+					var animalDiv = $('<button>')
 
 					var p = $('<p>').text("Rating: " + results[i].rating);
 
 					var animalImage = $('<img>');
 
-					animalImage.attr('src', results[i].images.fixed_height_still.url);
+					animalImage.addClass('gif');
 
+					animalImage.attr('src',  results[i].images.fixed_height_still.url);
 
-					//This is supposed to be the moving image. Comes back as 'undefined'. Don't know why, same as the still one.
-					var movingAnimalImage = $('<img>')
+					animalImage.attr("data-state", "still");
 
-					movingAnimalImage.attr('src', result[i].images.fixed_height.url);
+					animalImage.attr("data-still",  results[i].images.fixed_height_still.url);
+
+					animalImage.attr("data-animate",  results[i].images.fixed_height.url);
 
 					animalDiv.append(p);
 					
@@ -66,6 +64,25 @@
 					$('#gifs-appear-here').prepend(animalDiv);
 
 				}
+
+				$(".gif").on("click", function() {
+     				
+     				var state = $(this).attr("data-state");
+      				
+      				if (state === "still") {
+
+      					$(this).attr("src", $(this).attr("data-animate"));
+
+      					$(this).attr("data-state", "animate");
+
+      				} else {
+
+      					$(this).attr("src", $(this).attr("data-still"));
+
+      					$(this).attr("data-state", "still");
+
+      				}
+      			});
 			});
 		});
 
