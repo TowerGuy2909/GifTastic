@@ -13,80 +13,135 @@
 
 	<button data-animal ="bird">birds</button>
 
+<div class="container">
+
+	<div id="buttons-view"></div>
+
+	<form id="animal-form">
+
+		<label for="animal-input">Add a animal</label>
+
+		<input type="text" id="animal-input"><br>
+
+		<input id="add-animal" type="submit" value="Add an animal">
+
+	</form>
+
 	<div id="gifs-appear-here">
 		
 	</div>
-
+</div>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 	<script type="text/javascript">
 
-		$("button").on("click", function(){
+		var animalList = ["cat", "dog", "bird"];
 
-
-			var animal = $(this).data("animal");
-
-			var number = Math.floor(Math.random()*1000) + 1;
-
-			var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=oaHSY8wjitMacRaxtHhnX6NFULHXtffh&q=" + animal +"&limit=10&rating=g&offset=" + number;
-
-			$.ajax({
-				url: queryURL,
-				method: "GET"
-			}).done(function(response){
-
-				var results = response.data;
-				
-				$('#gifs-appear-here').empty();
-
-				for (var i = 0; i < results.length; i++) {
-
-					var animalDiv = $('<button>')
-
-					var p = $('<p>').text("Rating: " + results[i].rating);
-
-					var animalImage = $('<img>');
-
-					animalImage.addClass('gif');
-
-					animalImage.attr('src',  results[i].images.fixed_height_still.url);
-
-					animalImage.attr("data-state", "still");
-
-					animalImage.attr("data-still",  results[i].images.fixed_height_still.url);
-
-					animalImage.attr("data-animate",  results[i].images.fixed_height.url);
-
-					animalDiv.append(p);
-					
-					animalDiv.append(animalImage);
-
-					$('#gifs-appear-here').prepend(animalDiv);
-
-				}
-
-				$(".gif").on("click", function() {
-     				
-     				var state = $(this).attr("data-state");
-      				
-      				if (state === "still") {
-
-      					$(this).attr("src", $(this).attr("data-animate"));
-
-      					$(this).attr("data-state", "animate");
-
-      				} else {
-
-      					$(this).attr("src", $(this).attr("data-still"));
-
-      					$(this).attr("data-state", "still");
-
-      				}
-      			});
-			});
+		$(window).on('load', function(){
+			renderButtons();
 		});
 
-	</script>
+		function renderButtons(){
+
+			$("#buttons-view").empty();
+
+			for (var i = 0; i < animalList.length; i++) {
+
+				var a = $("<button>");
+
+				a.attr("data-animal", animalList[i]);
+
+				a.text(animalList[i]);
+
+				$("#buttons-view").append(a);
+
+			};
+		};
+
+		$("#add-animal").on("click", function(event) {
+
+			event.preventDefault();
+
+			var animalChoice = $("#animal-input").val().trim();
+
+			animalList.push(animalChoice);
+
+			renderButtons();
+
+			$('#animal-input').val('');
+
+		});
+
+
+
+
+				$("button").on("click", function(){
+
+
+					var animal = $(this).data("animal");
+
+					var number = Math.floor(Math.random()*1000) + 1;
+
+					var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=oaHSY8wjitMacRaxtHhnX6NFULHXtffh&q=" + animal +"&limit=10&rating=g&offset=" + number;
+
+					$.ajax({
+						url: queryURL,
+						method: "GET"
+					}).done(function(response){
+
+						var results = response.data;
+
+						$('#gifs-appear-here').empty();
+
+						for (var i = 0; i < results.length; i++) {
+
+							var animalDiv = $('<button>')
+
+							var p = $('<p>').text("Rating: " + results[i].rating);
+
+							var animalImage = $('<img>');
+
+							animalImage.addClass('gif');
+
+							animalImage.attr('src',  results[i].images.fixed_height_still.url);
+
+							animalImage.attr("data-state", "still");
+
+							animalImage.attr("data-still",  results[i].images.fixed_height_still.url);
+
+							animalImage.attr("data-animate",  results[i].images.fixed_height.url);
+
+							animalDiv.append(p);
+
+							animalDiv.append(animalImage);
+
+							$('#gifs-appear-here').prepend(animalDiv);
+
+						}
+
+						$(".gif").on("click", function() {
+
+							var state = $(this).attr("data-state");
+
+							if (state === "still") {
+
+								$(this).attr("src", $(this).attr("data-animate"));
+
+								$(this).attr("data-state", "animate");
+
+							} else {
+
+								$(this).attr("src", $(this).attr("data-still"));
+
+								$(this).attr("data-state", "still");
+
+							}
+						});
+					});
+				});
+
+
+		</script>
 </body>
 
 </html>
