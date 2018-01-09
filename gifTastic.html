@@ -7,12 +7,6 @@
 </head>
 <body>
 
-	<button data-animal ="cat">cats</button>
-
-	<button data-animal ="dog">dogs</button>
-
-	<button data-animal ="bird">birds</button>
-
 <div class="container">
 
 	<div id="buttons-view"></div>
@@ -21,9 +15,7 @@
 
 		<label for="animal-input">Add a animal</label>
 
-		<input type="text" id="animal-input"><br>
-
-		<input id="add-animal" type="submit" value="Add an animal">
+		<input type="text" id="animal-input" id="add-animal"><br>
 
 	</form>
 
@@ -75,7 +67,7 @@
 
 
 
-				$("button").on("click", function(){
+				$(document).on("click", "button", function(){
 
 
 					var animal = $(this).data("animal");
@@ -95,7 +87,7 @@
 
 						for (var i = 0; i < results.length; i++) {
 
-							var animalDiv = $('<button>')
+							var animalDiv = $('<div>')
 
 							var p = $('<p>').text("Rating: " + results[i].rating);
 
